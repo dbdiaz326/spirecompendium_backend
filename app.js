@@ -36,6 +36,15 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.get("/api/messages", async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.json(messages);
+  } catch (err) {
+    res.status(500).send("Could not retrieve messages");
+  }
+});
+
 //listen for incoming requests
 app.listen(port, () => {
   console.log("Server is up and running");
