@@ -1,0 +1,31 @@
+body {
+    background-color: #1c1612;
+    font-family: Cambria, 'Times New Roman', serif;
+    margin: 0;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+h1 {
+    color: #f3e5c8;
+    text-transform: uppercase;
+}
+
+p {
+    background-color: #452b24;
+    border: 1px solid #8b573d;
+    border-radius: 18px;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+a {
+    color: #d98b52;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #e5b96f;
+}
