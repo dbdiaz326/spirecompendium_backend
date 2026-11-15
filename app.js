@@ -1,11 +1,24 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
+const Joi = require("joi");
 const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./public/images/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
+
+const upload = multer({ storage: storage });
 
 let heroes = [
     {
@@ -49,6 +62,49 @@ let heroes = [
 app.get("/api/heroes", (req,res)=>{
     res.send(heroes);
 });
+
+app.post("/api/heroes", upload.single("img"), (req,res)=>{
+    const result = validateHero(req.body);
+
+    if(result.error){
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    if(!req.file){
+        res.status(400).send("Select an image");
+        return;
+    }
+
+    const hero = {
+        _id:heroes.length+1,
+        name:req.body.name,
+        description:req.body.description,
+        emoji:req.body.emoji,
+        color:req.body.color,
+        main_image:req.file.filename
+    };
+
+    heroes.push(hero);
+
+    res.status(200).send(hero);
+});
+
+const validateHero = (hero) => {
+    const schema = Joi.object({
+        name:Joi.string().min(3).required(),
+        description:Joi.string().min(3).required(),
+        emoji:Joi.string().required(),
+        color:Joi.string().valid(
+            "ironclad-color",
+            "silent-color",
+            "defect-color",
+            "watcher-color"
+        ).required()
+    });
+
+    return schema.validate(hero);
+};
 
 //listen for incoming requests
 app.listen(port, ()=>{
